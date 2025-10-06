@@ -19,7 +19,6 @@
             <option value="Lenguaje de marcas">Lenguaje de marcas</option>
             <option value="Entornos de desarrollo">Entornos de desarrollo</option>
             <option value="Formación y orientación laboral">Formación y orientación laboral</option>
-            <!-- Añade más módulos si quieres -->
         </select><br><br>
 
         <label for="asunto">Asunto:</label><br>
