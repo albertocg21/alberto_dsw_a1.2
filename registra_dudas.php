@@ -10,6 +10,28 @@ $modulos_validos = [
 
 $errores = [];
 
+function validar_correo($correo) {
+    return filter_var($correo, FILTER_VALIDATE_EMAIL) ? true : "El correo electrónico no tiene un formato válido.";
+}
+
+function validar_modulo($modulo, $modulos_validos) {
+    return in_array($modulo, $modulos_validos) ? true : "El módulo seleccionado no es válido.";
+}
+
+function validar_asunto($asunto) {
+    if (strlen($asunto) > 50) {
+        return "El asunto no puede tener más de 50 caracteres.";
+    }
+    if (is_numeric($asunto)) {
+        return "El asunto no puede ser numérico.";
+    }
+    return true;
+}
+
+function validar_descripcion($descripcion) {
+    return strlen($descripcion) <= 300 ? true : "La descripción no puede tener más de 300 caracteres.";
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $correo = trim($_POST['correo']);
@@ -17,23 +39,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $asunto = trim($_POST['asunto']);
     $descripcion = trim($_POST['descripcion']);
 
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $errores[] = "El correo electrónico no tiene un formato válido.";
+    $resultado_correo = validar_correo($correo);
+    if ($resultado_correo !== true) {
+        $errores[] = $resultado_correo;
     }
 
-    if (!in_array($modulo, $modulos_validos)) {
-        $errores[] = "El módulo seleccionado no es válido.";
+    $resultado_modulo = validar_modulo($modulo, $modulos_validos);
+    if ($resultado_modulo !== true) {
+        $errores[] = $resultado_modulo;
     }
 
-    if (strlen($asunto) > 50) {
-        $errores[] = "El asunto no puede tener más de 50 caracteres.";
-    }
-    if (is_numeric($asunto)) {
-        $errores[] = "El asunto no puede ser numérico.";
+    $resultado_asunto = validar_asunto($asunto);
+    if ($resultado_asunto !== true) {
+        $errores[] = $resultado_asunto;
     }
 
-    if (strlen($descripcion) > 300) {
-        $errores[] = "La descripción no puede tener más de 300 caracteres.";
+    $resultado_descripcion = validar_descripcion($descripcion);
+    if ($resultado_descripcion !== true) {
+        $errores[] = $resultado_descripcion;
     }
 
     if (empty($errores)) {
