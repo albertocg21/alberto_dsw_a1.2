@@ -8,6 +8,12 @@ $modulos_validos = [
     "Lenguajes de Marcas"
 ];
 
+$temas_validos = [
+    "Linux", "Windows", "PHP", "HTML", "JavaScript",
+    "Bash", "Calificaciones", "Actividades", "Examenes", "Otros"
+];
+
+
 $errores = [];
 
 function validar_correo($correo) {
@@ -32,12 +38,32 @@ function validar_descripcion($descripcion) {
     return strlen($descripcion) <= 300 ? true : "La descripción no puede tener más de 300 caracteres.";
 }
 
+function numero_temas_seleccionados($temas_validos) {
+
+    if (count($temas_validos) < 1) {
+        return "Debes seleccionar al menos 1 tema.";
+    }
+
+    if (count($temas_validos) > 3) {
+        return "No puedes seleccionar más de 3 temas.";
+    }
+
+    return true;
+
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $correo = trim($_POST['correo']);
     $modulo = trim($_POST['modulo']);
     $asunto = trim($_POST['asunto']);
     $descripcion = trim($_POST['descripcion']);
+    $temas_seleccionados = isset($_POST['tema']) ? $_POST['tema'] : [];
+    
+    $validacion_temas = numero_temas_seleccionados($temas_seleccionados);
+    if ($validacion_temas !== true) {
+        $errores[] = $validacion_temas;
+    }
 
     $resultado_correo = validar_correo($correo);
     if ($resultado_correo !== true) {
@@ -59,9 +85,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errores[] = $resultado_descripcion;
     }
 
+    $temas_string = implode(", ", $_POST['tema']);
+
     if (empty($errores)) {
 
-        $linea = "\"$correo\";\"$modulo\";\"$asunto\";\"$descripcion\"\n";
+        $linea = "\"$correo\";\"$modulo\";\"$asunto\";\"$descripcion\";\"$temas_string\"\n";
 
         $archivo = 'data/dudas.csv';
 
